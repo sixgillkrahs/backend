@@ -1,5 +1,18 @@
 # Milestones
 
+## v1.1 v1.1 (Shipped: 2026-06-22)
+
+**Phases completed:** 3 phases, 0 plans, 0 tasks
+
+- Implemented user registration & login (using bcrypt for hashing and returning JWT).
+- Implemented JWT verification middleware enforcing Client IP locking (reject if IP changes).
+- Designed and implemented PostgreSQL schema migrations and GORM models for Roles, Resources, Actions, Policies, and User-Role mappings.
+- Implemented dynamic authorization middleware verifying route resource/action against DB policies.
+- Implemented dynamic management APIs for Roles, Resources, Actions, Policies, and User Role assignments.
+- Performed full end-to-end integration and verification testing of dynamic RBAC policies.
+
+---
+
 ## v1.0 v1.0 (Shipped: 2026-06-22)
 
 **Phases completed:** 3 phases, 7 plans, 22 tasks
