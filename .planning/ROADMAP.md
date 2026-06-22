@@ -7,7 +7,7 @@ Initialize a Golang backend skeleton following the Go Standard Layout with Gin, 
 ## Phases
 
 - [x] **Phase 1: Environment & Tooling** - Set up Go module, dependencies, Docker Compose, and Air. (completed 2026-06-22)
-- [ ] **Phase 2: Directory Layout & Connections** - Scaffold project layout and configure Postgres/Redis connections with migrations.
+- [x] **Phase 2: Directory Layout & Connections** - Scaffold project layout and configure Postgres/Redis connections with migrations. (completed 2026-06-22)
 - [ ] **Phase 3: Router & Healthcheck APIs** - Configure Gin router and verify status with `/ping` and `/healthz` API endpoints.
 
 ## Phase Details
@@ -46,12 +46,12 @@ Plans:
 Plans:
 **Wave 1**
 
-- [ ] 02-01: Go Standard Layout scaffolding
+- [x] 02-01: Go Standard Layout scaffolding
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-02: PostgreSQL connection & golang-migrate setup
-- [ ] 02-03: Redis connection setup
+- [x] 02-02: PostgreSQL connection & golang-migrate setup
+- [x] 02-03: Redis connection setup
 
 ### Phase 3: Router & Healthcheck APIs
 
@@ -79,5 +79,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Environment & Tooling | 2/2 | Complete    | 2026-06-22 |
-| 2. Directory Layout & Connections | 0/3 | Not started | - |
+| 2. Directory Layout & Connections | 3/3 | Complete    | 2026-06-22 |
 | 3. Router & Healthcheck APIs | 0/2 | Not started | - |

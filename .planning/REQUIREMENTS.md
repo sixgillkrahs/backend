@@ -16,19 +16,19 @@
 
 ### Directory Structure
 
-- [ ] **DIR-01**: Create `cmd/server/` directory containing the main entry point `main.go`.
-- [ ] **DIR-02**: Create `internal/app/` containing application bootstrapper and HTTP router.
-- [ ] **DIR-03**: Create `internal/pkg/` containing shared modules (database connection, logger, config loader, cache connection).
+- [x] **DIR-01**: Create `cmd/server/` directory containing the main entry point `main.go`.
+- [x] **DIR-02**: Create `internal/app/` containing application bootstrapper and HTTP router.
+- [x] **DIR-03**: Create `internal/pkg/` containing shared modules (database connection, logger, config loader, cache connection).
 
 ### Database & Migrations
 
-- [ ] **DB-01**: Configure PostgreSQL connection pool in `internal/pkg/db/postgres.go`.
-- [ ] **DB-02**: Integrate `golang-migrate` support for database migrations.
-- [ ] **DB-03**: Create initial SQL migration files under `migrations/`.
+- [x] **DB-01**: Configure PostgreSQL connection pool in `internal/pkg/db/postgres.go`.
+- [x] **DB-02**: Integrate `golang-migrate` support for database migrations.
+- [x] **DB-03**: Create initial SQL migration files under `migrations/`.
 
 ### Cache & Storage
 
-- [ ] **CACHE-01**: Configure Redis client connection in `internal/pkg/cache/redis.go`.
+- [x] **CACHE-01**: Configure Redis client connection in `internal/pkg/cache/redis.go`.
 
 ### Router & Handlers
 
@@ -64,13 +64,13 @@
 | ENV-04 | Phase 1 | Complete |
 | ENV-05 | Phase 1 | Complete |
 | ENV-06 | Phase 1 | Complete |
-| DIR-01 | Phase 2 | Pending |
-| DIR-02 | Phase 2 | Pending |
-| DIR-03 | Phase 2 | Pending |
-| DB-01 | Phase 2 | Pending |
-| DB-02 | Phase 2 | Pending |
-| DB-03 | Phase 2 | Pending |
-| CACHE-01 | Phase 2 | Pending |
+| DIR-01 | Phase 2 | Complete |
+| DIR-02 | Phase 2 | Complete |
+| DIR-03 | Phase 2 | Complete |
+| DB-01 | Phase 2 | Complete |
+| DB-02 | Phase 2 | Complete |
+| DB-03 | Phase 2 | Complete |
+| CACHE-01 | Phase 2 | Complete |
 | API-01 | Phase 3 | Pending |
 | API-02 | Phase 3 | Pending |
 
