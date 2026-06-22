@@ -6,52 +6,64 @@ Initialize a Golang backend skeleton following the Go Standard Layout with Gin, 
 
 ## Phases
 
-- [ ] **Phase 1: Environment & Tooling** - Set up Go module, dependencies, Docker Compose, and Air.
+- [x] **Phase 1: Environment & Tooling** - Set up Go module, dependencies, Docker Compose, and Air. (completed 2026-06-22)
 - [ ] **Phase 2: Directory Layout & Connections** - Scaffold project layout and configure Postgres/Redis connections with migrations.
 - [ ] **Phase 3: Router & Healthcheck APIs** - Configure Gin router and verify status with `/ping` and `/healthz` API endpoints.
 
 ## Phase Details
 
 ### Phase 1: Environment & Tooling
+
 **Goal**: Set up Go module, dependencies, Docker Compose, and Air.
 **Depends on**: Nothing
 **Requirements**: ENV-01, ENV-02, ENV-03, ENV-04, ENV-05, ENV-06
 **Success Criteria** (what must be TRUE):
+
   1. Go module initialized and core dependency packages installed.
   2. docker-compose.yml runs PostgreSQL and Redis without error.
   3. Air config is set up and ready to watch changes.
+
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Go module initialization & dependency setup
-- [ ] 01-02: Docker Compose & Air configuration
+
+- [x] 01-01: Go module initialization & dependency setup
+- [x] 01-02: Docker Compose & Air configuration
 
 ### Phase 2: Directory Layout & Connections
+
 **Goal**: Scaffold project layout and configure Postgres/Redis connections with migrations.
 **Depends on**: Phase 1
 **Requirements**: DIR-01, DIR-02, DIR-03, DB-01, DB-02, DB-03, CACHE-01
 **Success Criteria** (what must be TRUE):
+
   1. Directories cmd/, internal/app/, and internal/pkg/ structured.
   2. Database migration logic and initial SQL migration files created.
   3. Postgres and Redis connection pools established upon app boot.
+
 **Plans**: 3 plans
 
 Plans:
+
 - [ ] 02-01: Go Standard Layout scaffolding
 - [ ] 02-02: PostgreSQL connection & golang-migrate setup
 - [ ] 02-03: Redis connection setup
 
 ### Phase 3: Router & Healthcheck APIs
+
 **Goal**: Configure Gin router and verify status with `/ping` and `/healthz` API endpoints.
 **Depends on**: Phase 2
 **Requirements**: API-01, API-02
 **Success Criteria** (what must be TRUE):
+
   1. Gin router parses requests and maps endpoints.
   2. `/ping` endpoint returns valid JSON.
   3. `/healthz` dynamically pings database and Redis connection and returns healthy status.
+
 **Plans**: 2 plans
 
 Plans:
+
 - [ ] 03-01: Gin router & ping route setup
 - [ ] 03-02: Healthcheck route with DB & Redis ping verification
 
@@ -62,6 +74,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Environment & Tooling | 0/2 | Not started | - |
+| 1. Environment & Tooling | 2/2 | Complete    | 2026-06-22 |
 | 2. Directory Layout & Connections | 0/3 | Not started | - |
 | 3. Router & Healthcheck APIs | 0/2 | Not started | - |

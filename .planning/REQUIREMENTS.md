@@ -7,12 +7,12 @@
 
 ### Environment & Tooling
 
-- [ ] **ENV-01**: Initialize Go module `github.com/username/backend`.
-- [ ] **ENV-02**: Install core dependency: Gin framework (`github.com/gin-gonic/gin`).
-- [ ] **ENV-03**: Install database driver/ORM: Gorm & PostgreSQL driver (`gorm.io/gorm`, `gorm.io/driver/postgres`).
-- [ ] **ENV-04**: Install Redis client (`github.com/redis/go-redis/v9`).
-- [ ] **ENV-05**: Configure `.air.toml` for hot reloading with Air.
-- [ ] **ENV-06**: Create `docker-compose.yml` defining services for PostgreSQL, Redis, and hot-reloading Air.
+- [x] **ENV-01**: Initialize Go module `github.com/username/backend`.
+- [x] **ENV-02**: Install core dependency: Gin framework (`github.com/gin-gonic/gin`).
+- [x] **ENV-03**: Install database driver/ORM: Gorm & PostgreSQL driver (`gorm.io/gorm`, `gorm.io/driver/postgres`).
+- [x] **ENV-04**: Install Redis client (`github.com/redis/go-redis/v9`).
+- [x] **ENV-05**: Configure `.air.toml` for hot reloading with Air.
+- [x] **ENV-06**: Create `docker-compose.yml` defining services for PostgreSQL, Redis, and hot-reloading Air.
 
 ### Directory Structure
 
@@ -58,12 +58,12 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENV-01 | Phase 1 | Pending |
-| ENV-02 | Phase 1 | Pending |
-| ENV-03 | Phase 1 | Pending |
-| ENV-04 | Phase 1 | Pending |
-| ENV-05 | Phase 1 | Pending |
-| ENV-06 | Phase 1 | Pending |
+| ENV-01 | Phase 1 | Complete |
+| ENV-02 | Phase 1 | Complete |
+| ENV-03 | Phase 1 | Complete |
+| ENV-04 | Phase 1 | Complete |
+| ENV-05 | Phase 1 | Complete |
+| ENV-06 | Phase 1 | Complete |
 | DIR-01 | Phase 2 | Pending |
 | DIR-02 | Phase 2 | Pending |
 | DIR-03 | Phase 2 | Pending |
@@ -75,6 +75,7 @@
 | API-02 | Phase 3 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 15 total
 - Mapped to phases: 15
 - Unmapped: 0 ✓
