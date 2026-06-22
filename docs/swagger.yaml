@@ -1,0 +1,1165 @@
+basePath: /
+definitions:
+  handler.UserRoleRequest:
+    properties:
+      role_id:
+        type: integer
+    required:
+    - role_id
+    type: object
+  model.Action:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        maxLength: 50
+        minLength: 2
+        type: string
+      updated_at:
+        type: string
+    required:
+    - name
+    type: object
+  model.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  model.LoginResponse:
+    properties:
+      token:
+        type: string
+      user:
+        $ref: '#/definitions/model.User'
+    type: object
+  model.Policy:
+    properties:
+      action:
+        $ref: '#/definitions/model.Action'
+      action_id:
+        type: integer
+      created_at:
+        type: string
+      effect:
+        enum:
+        - allow
+        - deny
+        type: string
+      id:
+        type: integer
+      resource:
+        $ref: '#/definitions/model.Resource'
+      resource_id:
+        type: integer
+      role:
+        $ref: '#/definitions/model.Role'
+      role_id:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - action_id
+    - effect
+    - resource_id
+    - role_id
+    type: object
+  model.Resource:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      updated_at:
+        type: string
+    required:
+    - name
+    type: object
+  model.Role:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      updated_at:
+        type: string
+    required:
+    - name
+    type: object
+  model.SignupRequest:
+    properties:
+      email:
+        type: string
+      name:
+        maxLength: 100
+        minLength: 2
+        type: string
+      password:
+        maxLength: 72
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Interactive API documentation with dynamic RBAC and IP-locked JWT.
+  termsOfService: http://swagger.io/terms/
+  title: Golang Gin Backend Scaffold API
+  version: "1.0"
+paths:
+  /api/v1/actions:
+    get:
+      description: Retrieves all action descriptors defined in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of actions
+          schema:
+            items:
+              $ref: '#/definitions/model.Action'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Actions
+      tags:
+      - Actions
+    post:
+      consumes:
+      - application/json
+      description: Creates a new action descriptor.
+      parameters:
+      - description: Action creation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Action'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Action created successfully
+          schema:
+            $ref: '#/definitions/model.Action'
+        "400":
+          description: Bad request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Action
+      tags:
+      - Actions
+  /api/v1/actions/{id}:
+    delete:
+      description: Deletes an action definition.
+      parameters:
+      - description: Action ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Action deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Action
+      tags:
+      - Actions
+    put:
+      consumes:
+      - application/json
+      description: Updates the name or description of an action.
+      parameters:
+      - description: Action ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Action update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Action'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Action updated successfully
+          schema:
+            $ref: '#/definitions/model.Action'
+        "400":
+          description: Invalid ID or bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Action not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Action
+      tags:
+      - Actions
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates email and password, returning an IP-locked JWT access
+        token.
+      parameters:
+      - description: Login credentials payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged in and generated JWT
+          schema:
+            $ref: '#/definitions/model.LoginResponse'
+        "400":
+          description: Bad request validation payload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Invalid email or password credentials
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal JWT or server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Login
+      tags:
+      - Authentication
+  /api/v1/auth/signup:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with their name, email, and password.
+      parameters:
+      - description: Signup payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.SignupRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User registered successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad request validation payload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Email already registered conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal database or server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User Signup
+      tags:
+      - Authentication
+  /api/v1/policies:
+    get:
+      description: Retrieves all policies. Preloads Roles, Resources, and Actions
+        relationship structs.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of policies
+          schema:
+            items:
+              $ref: '#/definitions/model.Policy'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Policies
+      tags:
+      - Policies
+    post:
+      consumes:
+      - application/json
+      description: Creates a new policy mapping a role to a resource and action.
+      parameters:
+      - description: Policy mapping data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Policy'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Policy created successfully
+          schema:
+            $ref: '#/definitions/model.Policy'
+        "400":
+          description: Bad request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Policy
+      tags:
+      - Policies
+  /api/v1/policies/{id}:
+    delete:
+      description: Deletes a policy definition.
+      parameters:
+      - description: Policy ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Policy deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Policy
+      tags:
+      - Policies
+    put:
+      consumes:
+      - application/json
+      description: Updates the role, resource, action, or effect of a policy.
+      parameters:
+      - description: Policy ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Policy update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Policy'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Policy updated successfully
+          schema:
+            $ref: '#/definitions/model.Policy'
+        "400":
+          description: Invalid ID or bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Policy not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Policy
+      tags:
+      - Policies
+  /api/v1/profile:
+    get:
+      description: Fetches the current user profile from PostgreSQL using the authenticated
+        context. Checks client IP lock.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful profile response
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized or IP lock validation failure
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get User Profile
+      tags:
+      - Authentication
+  /api/v1/resources:
+    get:
+      description: Retrieves all resources defined in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of resources
+          schema:
+            items:
+              $ref: '#/definitions/model.Resource'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Resources
+      tags:
+      - Resources
+    post:
+      consumes:
+      - application/json
+      description: Creates a new resource descriptor.
+      parameters:
+      - description: Resource creation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Resource'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Resource created successfully
+          schema:
+            $ref: '#/definitions/model.Resource'
+        "400":
+          description: Bad request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Resource
+      tags:
+      - Resources
+  /api/v1/resources/{id}:
+    delete:
+      description: Deletes a resource definition.
+      parameters:
+      - description: Resource ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Resource deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Resource
+      tags:
+      - Resources
+    put:
+      consumes:
+      - application/json
+      description: Updates the name or description of a resource.
+      parameters:
+      - description: Resource ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Resource update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Resource'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Resource updated successfully
+          schema:
+            $ref: '#/definitions/model.Resource'
+        "400":
+          description: Invalid ID or bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Resource not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Resource
+      tags:
+      - Resources
+  /api/v1/roles:
+    get:
+      description: Retrieves all roles configured in the system.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of roles
+          schema:
+            items:
+              $ref: '#/definitions/model.Role'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Roles
+      tags:
+      - Roles
+    post:
+      consumes:
+      - application/json
+      description: Creates a new custom role.
+      parameters:
+      - description: Role creation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Role'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Role created successfully
+          schema:
+            $ref: '#/definitions/model.Role'
+        "400":
+          description: Bad request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Role
+      tags:
+      - Roles
+  /api/v1/roles/{id}:
+    delete:
+      description: Deletes a role and revokes its policy mappings.
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Role
+      tags:
+      - Roles
+    put:
+      consumes:
+      - application/json
+      description: Updates the name or description of a role.
+      parameters:
+      - description: Role ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.Role'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role updated successfully
+          schema:
+            $ref: '#/definitions/model.Role'
+        "400":
+          description: Invalid ID or bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Role not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Role
+      tags:
+      - Roles
+  /api/v1/users/{id}/roles:
+    delete:
+      consumes:
+      - application/json
+      description: Removes a user role mapping.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role revocation data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role revoked successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID or request payload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Revoke User Role
+      tags:
+      - User Roles
+    post:
+      consumes:
+      - application/json
+      description: Maps a user to a dynamic role.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Role mapping data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UserRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Role assigned successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid ID or request payload
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden by RBAC policy
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User or Role not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal database error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Assign User Role
+      tags:
+      - User Roles
+  /healthz:
+    get:
+      description: Checks PostgreSQL and Redis connection statuses and returns overall
+        health status.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: healthy status response
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: unhealthy status response
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health Check
+      tags:
+      - General
+  /ping:
+    get:
+      description: returns a simple pong message to verify the server is running.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong response
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Ping Pong
+      tags:
+      - General
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer <your-token>" to authenticate.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

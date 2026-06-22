@@ -13,6 +13,17 @@ import (
 )
 
 // SignupHandler registers a new user with email, name, and hashed password.
+// @Summary User Signup
+// @Description Register a new user with their name, email, and password.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body model.SignupRequest true "Signup payload"
+// @Success 201 {object} map[string]interface{} "User registered successfully"
+// @Failure 400 {object} map[string]string "Bad request validation payload"
+// @Failure 409 {object} map[string]string "Email already registered conflict"
+// @Failure 500 {object} map[string]string "Internal database or server error"
+// @Router /api/v1/auth/signup [post]
 func SignupHandler(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.SignupRequest
@@ -61,6 +72,17 @@ func SignupHandler(db *gorm.DB) gin.HandlerFunc {
 }
 
 // LoginHandler authenticates credentials and returns an IP-locked JWT.
+// @Summary User Login
+// @Description Authenticates email and password, returning an IP-locked JWT access token.
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body model.LoginRequest true "Login credentials payload"
+// @Success 200 {object} model.LoginResponse "Successfully logged in and generated JWT"
+// @Failure 400 {object} map[string]string "Bad request validation payload"
+// @Failure 401 {object} map[string]string "Invalid email or password credentials"
+// @Failure 500 {object} map[string]string "Internal JWT or server error"
+// @Router /api/v1/auth/login [post]
 func LoginHandler(db *gorm.DB, cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.LoginRequest
@@ -99,6 +121,40 @@ func LoginHandler(db *gorm.DB, cfg *config.Config) gin.HandlerFunc {
 		c.JSON(http.StatusOK, model.LoginResponse{
 			Token: token,
 			User:  user,
+		})
+	}
+}
+
+// ProfileHandler retrieves the authenticated user's profile info and request/token IP properties.
+// @Summary Get User Profile
+// @Description Fetches the current user profile from PostgreSQL using the authenticated context. Checks client IP lock.
+// @Tags Authentication
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{} "Successful profile response"
+// @Failure 401 {object} map[string]string "Unauthorized or IP lock validation failure"
+// @Failure 404 {object} map[string]string "User not found"
+// @Router /api/v1/profile [get]
+func ProfileHandler(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userID, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authentication required"})
+			return
+		}
+
+		clientIP, _ := c.Get("clientIP")
+
+		var user model.User
+		if err := db.First(&user, userID).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"user":      user,
+			"token_ip":  clientIP,
+			"client_ip": c.ClientIP(),
 		})
 	}
 }

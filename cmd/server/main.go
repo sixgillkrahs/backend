@@ -10,6 +10,18 @@ import (
 	"github.com/username/backend/internal/pkg/db"
 )
 
+// @title Golang Gin Backend Scaffold API
+// @version 1.0
+// @description Interactive API documentation with dynamic RBAC and IP-locked JWT.
+// @termsOfService http://swagger.io/terms/
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Type "Bearer <your-token>" to authenticate.
 func main() {
 	// Initialize structured logging using slog
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))

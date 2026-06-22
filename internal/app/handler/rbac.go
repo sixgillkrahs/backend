@@ -13,6 +13,17 @@ import (
 
 // --- Roles Handlers ---
 
+// GetRoles retrieves all configured roles from the database.
+// @Summary Get Roles
+// @Description Retrieves all roles configured in the system.
+// @Tags Roles
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} model.Role "List of roles"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/roles [get]
 func GetRoles(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var roles []model.Role
@@ -24,6 +35,20 @@ func GetRoles(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// CreateRole creates a new dynamic role in the database.
+// @Summary Create Role
+// @Description Creates a new custom role.
+// @Tags Roles
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body model.Role true "Role creation data"
+// @Success 201 {object} model.Role "Role created successfully"
+// @Failure 400 {object} map[string]string "Bad request body"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/roles [post]
 func CreateRole(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.Role
@@ -39,6 +64,22 @@ func CreateRole(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// UpdateRole updates an existing role configuration by ID.
+// @Summary Update Role
+// @Description Updates the name or description of a role.
+// @Tags Roles
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Role ID"
+// @Param request body model.Role true "Role update data"
+// @Success 200 {object} model.Role "Role updated successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 404 {object} map[string]string "Role not found"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/roles/{id} [put]
 func UpdateRole(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -66,6 +107,19 @@ func UpdateRole(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// DeleteRole deletes a role by ID.
+// @Summary Delete Role
+// @Description Deletes a role and revokes its policy mappings.
+// @Tags Roles
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Role ID"
+// @Success 200 {object} map[string]string "Role deleted successfully"
+// @Failure 400 {object} map[string]string "Invalid ID"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/roles/{id} [delete]
 func DeleteRole(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -83,6 +137,17 @@ func DeleteRole(db *gorm.DB) gin.HandlerFunc {
 
 // --- Resources Handlers ---
 
+// GetResources retrieves all system resource definitions.
+// @Summary Get Resources
+// @Description Retrieves all resources defined in the system.
+// @Tags Resources
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} model.Resource "List of resources"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/resources [get]
 func GetResources(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var resources []model.Resource
@@ -94,6 +159,20 @@ func GetResources(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// CreateResource creates a new system resource definition.
+// @Summary Create Resource
+// @Description Creates a new resource descriptor.
+// @Tags Resources
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body model.Resource true "Resource creation data"
+// @Success 201 {object} model.Resource "Resource created successfully"
+// @Failure 400 {object} map[string]string "Bad request body"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/resources [post]
 func CreateResource(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.Resource
@@ -109,6 +188,22 @@ func CreateResource(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// UpdateResource updates an existing resource configuration by ID.
+// @Summary Update Resource
+// @Description Updates the name or description of a resource.
+// @Tags Resources
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Resource ID"
+// @Param request body model.Resource true "Resource update data"
+// @Success 200 {object} model.Resource "Resource updated successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 404 {object} map[string]string "Resource not found"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/resources/{id} [put]
 func UpdateResource(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -136,6 +231,19 @@ func UpdateResource(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// DeleteResource deletes a resource definition by ID.
+// @Summary Delete Resource
+// @Description Deletes a resource definition.
+// @Tags Resources
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Resource ID"
+// @Success 200 {object} map[string]string "Resource deleted successfully"
+// @Failure 400 {object} map[string]string "Invalid ID"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/resources/{id} [delete]
 func DeleteResource(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -153,6 +261,17 @@ func DeleteResource(db *gorm.DB) gin.HandlerFunc {
 
 // --- Actions Handlers ---
 
+// GetActions retrieves all authorization actions.
+// @Summary Get Actions
+// @Description Retrieves all action descriptors defined in the system.
+// @Tags Actions
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} model.Action "List of actions"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/actions [get]
 func GetActions(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var actions []model.Action
@@ -164,6 +283,20 @@ func GetActions(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// CreateAction creates a new dynamic authorization action.
+// @Summary Create Action
+// @Description Creates a new action descriptor.
+// @Tags Actions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body model.Action true "Action creation data"
+// @Success 201 {object} model.Action "Action created successfully"
+// @Failure 400 {object} map[string]string "Bad request body"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/actions [post]
 func CreateAction(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.Action
@@ -179,6 +312,22 @@ func CreateAction(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// UpdateAction updates an existing action configuration by ID.
+// @Summary Update Action
+// @Description Updates the name or description of an action.
+// @Tags Actions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Action ID"
+// @Param request body model.Action true "Action update data"
+// @Success 200 {object} model.Action "Action updated successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 404 {object} map[string]string "Action not found"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/actions/{id} [put]
 func UpdateAction(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -206,6 +355,19 @@ func UpdateAction(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// DeleteAction deletes an action definition by ID.
+// @Summary Delete Action
+// @Description Deletes an action definition.
+// @Tags Actions
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Action ID"
+// @Success 200 {object} map[string]string "Action deleted successfully"
+// @Failure 400 {object} map[string]string "Invalid ID"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/actions/{id} [delete]
 func DeleteAction(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -223,10 +385,20 @@ func DeleteAction(db *gorm.DB) gin.HandlerFunc {
 
 // --- Policies Handlers ---
 
+// GetPolicies retrieves all active access policies.
+// @Summary Get Policies
+// @Description Retrieves all policies. Preloads Roles, Resources, and Actions relationship structs.
+// @Tags Policies
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {array} model.Policy "List of policies"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/policies [get]
 func GetPolicies(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var policies []model.Policy
-		// Preload Role, Resource, and Action definitions for rich output representation
 		err := db.Preload("Role").Preload("Resource").Preload("Action").Find(&policies).Error
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -236,6 +408,20 @@ func GetPolicies(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// CreatePolicy creates a new dynamic access control policy.
+// @Summary Create Policy
+// @Description Creates a new policy mapping a role to a resource and action.
+// @Tags Policies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body model.Policy true "Policy mapping data"
+// @Success 201 {object} model.Policy "Policy created successfully"
+// @Failure 400 {object} map[string]string "Bad request body"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/policies [post]
 func CreatePolicy(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req model.Policy
@@ -247,12 +433,27 @@ func CreatePolicy(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		// Reload relationship fields for response
 		db.Preload("Role").Preload("Resource").Preload("Action").First(&req, req.ID)
 		c.JSON(http.StatusCreated, req)
 	}
 }
 
+// UpdatePolicy updates an existing policy configuration by ID.
+// @Summary Update Policy
+// @Description Updates the role, resource, action, or effect of a policy.
+// @Tags Policies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Policy ID"
+// @Param request body model.Policy true "Policy update data"
+// @Success 200 {object} model.Policy "Policy updated successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or bad request"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 404 {object} map[string]string "Policy not found"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/policies/{id} [put]
 func UpdatePolicy(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -283,6 +484,19 @@ func UpdatePolicy(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// DeletePolicy deletes a policy by ID.
+// @Summary Delete Policy
+// @Description Deletes a policy definition.
+// @Tags Policies
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Policy ID"
+// @Success 200 {object} map[string]string "Policy deleted successfully"
+// @Failure 400 {object} map[string]string "Invalid ID"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/policies/{id} [delete]
 func DeletePolicy(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id, err := strconv.Atoi(c.Param("id"))
@@ -304,6 +518,22 @@ type UserRoleRequest struct {
 	RoleID uint `json:"role_id" binding:"required"`
 }
 
+// AssignUserRole assigns a role to a user.
+// @Summary Assign User Role
+// @Description Maps a user to a dynamic role.
+// @Tags User Roles
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "User ID"
+// @Param request body UserRoleRequest true "Role mapping data"
+// @Success 200 {object} map[string]string "Role assigned successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or request payload"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 404 {object} map[string]string "User or Role not found"
+// @Failure 500 {object} map[string]string "Internal database error"
+// @Router /api/v1/users/{id}/roles [post]
 func AssignUserRole(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, err := strconv.Atoi(c.Param("id"))
@@ -345,6 +575,21 @@ func AssignUserRole(db *gorm.DB) gin.HandlerFunc {
 	}
 }
 
+// RemoveUserRole revokes a role from a user.
+// @Summary Revoke User Role
+// @Description Removes a user role mapping.
+// @Tags User Roles
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "User ID"
+// @Param request body UserRoleRequest true "Role revocation data"
+// @Success 200 {object} map[string]string "Role revoked successfully"
+// @Failure 400 {object} map[string]string "Invalid ID or request payload"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Internal database error"
+// @Router /api/v1/users/{id}/roles [delete]
 func RemoveUserRole(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, err := strconv.Atoi(c.Param("id"))

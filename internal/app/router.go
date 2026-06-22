@@ -7,9 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "github.com/username/backend/docs"
 	"github.com/username/backend/internal/app/handler"
 	"github.com/username/backend/internal/app/middleware"
-	"github.com/username/backend/internal/app/model"
 	"github.com/username/backend/internal/pkg/config"
 	"gorm.io/gorm"
 )
@@ -32,14 +34,14 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 	r.Use(slogLogger())
 
 	// Register GET /ping route
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
+	r.GET("/ping", PingHandler)
 
 	// Register GET /healthz route
 	r.GET("/healthz", handler.HealthHandler(dbConn, rdbClient))
+
+	// Register GET /swagger/*any route
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 
 	// API v1 Router Group
 	api := r.Group("/api/v1")
@@ -54,22 +56,7 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 		protected := api.Group("")
 		protected.Use(middleware.AuthMiddleware(cfg))
 		{
-			protected.GET("/profile", func(c *gin.Context) {
-				userID, _ := c.Get("userID")
-				clientIP, _ := c.Get("clientIP")
-
-				var user model.User
-				if err := dbConn.First(&user, userID).Error; err != nil {
-					c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
-					return
-				}
-
-				c.JSON(http.StatusOK, gin.H{
-					"user":      user,
-					"token_ip":  clientIP,
-					"client_ip": c.ClientIP(),
-				})
-			})
+			protected.GET("/profile", handler.ProfileHandler(dbConn))
 
 			// --- RBAC Management (Admin Protected) ---
 
@@ -128,4 +115,17 @@ func slogLogger() gin.HandlerFunc {
 			slog.Duration("latency", latency),
 		)
 	}
+}
+
+// PingHandler handles ping pong response.
+// @Summary Ping Pong
+// @Description returns a simple pong message to verify the server is running.
+// @Tags General
+// @Produce json
+// @Success 200 {object} map[string]string "pong response"
+// @Router /ping [get]
+func PingHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"message": "pong",
+	})
 }

@@ -11,6 +11,13 @@ import (
 )
 
 // HealthHandler checks database and cache connection status dynamically and returns diagnostic JSON.
+// @Summary Health Check
+// @Description Checks PostgreSQL and Redis connection statuses and returns overall health status.
+// @Tags General
+// @Produce json
+// @Success 200 {object} map[string]string "healthy status response"
+// @Failure 500 {object} map[string]string "unhealthy status response"
+// @Router /healthz [get]
 func HealthHandler(dbConn *gorm.DB, rdbClient *redis.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dbStatus := "up"
