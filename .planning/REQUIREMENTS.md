@@ -3,30 +3,42 @@
 **Defined:** 2026-06-22
 **Core Value:** Provide a clean, production-ready, containerized Go backend structure that makes starting development of new endpoints and services immediate and seamless.
 
-## Milestone v1.1: Authentication & Dynamic RBAC/Policy (Active)
+## Milestone v1.2: Swagger API Documentation (Active)
+
+### Dependencies & Setup
+- [ ] **SWAG-01**: Install swaggo Gin middleware packages and the `swag` generating command line tool.
+- [ ] **SWAG-02**: Add Swagger general annotations in `cmd/server/main.go` defining the API title, version, base path, and security scheme for JWT Bearer tokens.
+
+### Endpoint Annotations
+- [ ] **SWAG-03**: Annotate general endpoints `/ping` and `/healthz` with appropriate query/response descriptions.
+- [ ] **SWAG-04**: Annotate User authentication endpoints `/api/v1/auth/signup`, `/api/v1/auth/login`, and `/api/v1/profile`. Include security annotations for JWT protection.
+- [ ] **SWAG-05**: Annotate all dynamic RBAC management endpoints (Roles CRUD, Resources CRUD, Actions CRUD, Policies CRUD, and User-Role assignments).
+
+### Router Integration & Verification
+- [ ] **SWAG-06**: Generate doc files via `swag init` and mount `/swagger/*any` route using `gin-swagger` middleware in router.
+- [ ] **SWAG-07**: Verify Swagger UI loads, presents all endpoints, and allows making authenticated testing calls using a JWT token.
+
+---
+
+## Milestone v1.1: Authentication & Dynamic RBAC/Policy (Validated)
 
 ### User Authentication & JWT IP Lock
-- [ ] **AUTH-01**: User signup endpoint `POST /api/v1/auth/signup` accepts name, email, password, and stores the user with a bcrypt hashed password.
-- [ ] **AUTH-02**: User login endpoint `POST /api/v1/auth/login` validates credentials and returns a JWT access token containing User ID, Role IDs/Names, and Client IP address.
-- [ ] **AUTH-03**: Secure password validation using `bcrypt`.
-- [ ] **AUTH-04**: Authentication middleware extracts Bearer token from the `Authorization` header and parses/validates claims.
-- [ ] **AUTH-05**: Client IP locking enforcement in middleware: requests are rejected (401 Unauthorized) if the caller's IP doesn't match the IP embedded in the token.
+- [x] **AUTH-01**: User signup endpoint `POST /api/v1/auth/signup` accepts name, email, password, and stores the user with a bcrypt hashed password. (Phase 4)
+- [x] **AUTH-02**: User login endpoint `POST /api/v1/auth/login` validates credentials and returns a JWT access token containing User ID, Role IDs/Names, and Client IP address. (Phase 4)
+- [x] **AUTH-03**: Secure password validation using `bcrypt`. (Phase 4)
+- [x] **AUTH-04**: Authentication middleware extracts Bearer token from the `Authorization` header and parses/validates claims. (Phase 4)
+- [x] **AUTH-05**: Client IP locking enforcement in middleware: requests are rejected (401 Unauthorized) if the caller's IP doesn't match the IP embedded in the token. (Phase 4)
 
 ### Dynamic RBAC Database Schema & Models
-- [ ] **AUTH-06**: PostgreSQL migration schema for dynamic roles, resources, actions, and policies, including relational GORM models:
-  - `roles` (id, name, description)
-  - `resources` (id, name, description)
-  - `actions` (id, name, description)
-  - `policies` (id, role_id, resource_id, action_id, effect)
-  - `user_roles` (user_id, role_id)
-- [ ] **AUTH-07**: Database seeding script/migration containing default roles (`admin`, `user`), actions (`create`, `read`, `update`, `delete`), resources, and initial admin policies.
+- [x] **AUTH-06**: PostgreSQL migration schema for dynamic roles, resources, actions, and policies, including relational GORM models. (Phase 5)
+- [x] **AUTH-07**: Database seeding script/migration containing default roles, actions, resources, and initial admin policies. (Phase 5)
 
 ### Dynamic Authorization & Management APIs
-- [ ] **AUTH-08**: Dynamic authorization middleware checking target resource/action against policies assigned to the user's roles.
-- [ ] **AUTH-09**: Role management endpoints: CRUD `/api/v1/roles`.
-- [ ] **AUTH-10**: Resource and Action management endpoints: CRUD `/api/v1/resources` and `/api/v1/actions`.
-- [ ] **AUTH-11**: Policy management endpoints: CRUD `/api/v1/policies`.
-- [ ] **AUTH-12**: User Role assignment endpoints: POST/DELETE `/api/v1/users/:id/roles`.
+- [x] **AUTH-08**: Dynamic authorization middleware checking target resource/action against policies assigned to the user's roles. (Phase 6)
+- [x] **AUTH-09**: Role management endpoints: CRUD `/api/v1/roles`. (Phase 6)
+- [x] **AUTH-10**: Resource and Action management endpoints: CRUD `/api/v1/resources` and `/api/v1/actions`. (Phase 6)
+- [x] **AUTH-11**: Policy management endpoints: CRUD `/api/v1/policies`. (Phase 6)
+- [x] **AUTH-12**: User Role assignment endpoints: POST/DELETE `/api/v1/users/:id/roles`. (Phase 6)
 
 ---
 
@@ -88,20 +100,27 @@
 | CACHE-01 | Phase 2 | Complete |
 | API-01 | Phase 3 | Complete |
 | API-02 | Phase 3 | Complete |
-| AUTH-01 | Phase 4 | Planned |
-| AUTH-02 | Phase 4 | Planned |
-| AUTH-03 | Phase 4 | Planned |
-| AUTH-04 | Phase 4 | Planned |
-| AUTH-05 | Phase 4 | Planned |
-| AUTH-06 | Phase 5 | Planned |
-| AUTH-07 | Phase 5 | Planned |
-| AUTH-08 | Phase 6 | Planned |
-| AUTH-09 | Phase 6 | Planned |
-| AUTH-10 | Phase 6 | Planned |
-| AUTH-11 | Phase 6 | Planned |
-| AUTH-12 | Phase 6 | Planned |
+| AUTH-01 | Phase 4 | Complete |
+| AUTH-02 | Phase 4 | Complete |
+| AUTH-03 | Phase 4 | Complete |
+| AUTH-04 | Phase 4 | Complete |
+| AUTH-05 | Phase 4 | Complete |
+| AUTH-06 | Phase 5 | Complete |
+| AUTH-07 | Phase 5 | Complete |
+| AUTH-08 | Phase 6 | Complete |
+| AUTH-09 | Phase 6 | Complete |
+| AUTH-10 | Phase 6 | Complete |
+| AUTH-11 | Phase 6 | Complete |
+| AUTH-12 | Phase 6 | Complete |
+| SWAG-01 | Phase 7 | Planned |
+| SWAG-02 | Phase 7 | Planned |
+| SWAG-03 | Phase 7 | Planned |
+| SWAG-04 | Phase 7 | Planned |
+| SWAG-05 | Phase 7 | Planned |
+| SWAG-06 | Phase 8 | Planned |
+| SWAG-07 | Phase 8 | Planned |
 
 **Coverage:**
-- Milestone v1.1 requirements: 12 total
-- Mapped to phases: 12
+- Milestone v1.2 requirements: 7 total
+- Mapped to phases: 7
 - Unmapped: 0 ✓
