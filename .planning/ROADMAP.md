@@ -44,8 +44,12 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
+**Wave 1**
 
 - [ ] 02-01: Go Standard Layout scaffolding
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 02-02: PostgreSQL connection & golang-migrate setup
 - [ ] 02-03: Redis connection setup
 
