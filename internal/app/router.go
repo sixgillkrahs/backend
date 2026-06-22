@@ -39,8 +39,15 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 	// Register GET /healthz route
 	r.GET("/healthz", handler.HealthHandler(dbConn, rdbClient))
 
-	// Register GET /swagger/*any route
-	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// Register GET /swagger/*any route with automatic redirect from root to index.html
+	r.GET("/swagger/*any", func(c *gin.Context) {
+		path := c.Param("any")
+		if path == "" || path == "/" {
+			c.Redirect(http.StatusMovedPermanently, "/swagger/index.html")
+			return
+		}
+		ginSwagger.WrapHandler(swaggerFiles.Handler)(c)
+	})
 
 
 	// API v1 Router Group
