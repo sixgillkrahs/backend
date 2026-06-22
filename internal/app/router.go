@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	"github.com/username/backend/internal/app/handler"
 	"github.com/username/backend/internal/pkg/config"
 	"gorm.io/gorm"
 )
@@ -33,6 +34,9 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 			"message": "pong",
 		})
 	})
+
+	// Register GET /healthz route
+	r.GET("/healthz", handler.HealthHandler(dbConn, rdbClient))
 
 	return r
 }
