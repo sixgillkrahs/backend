@@ -1,0 +1,84 @@
+# Requirements: Golang Gin Backend Scaffold
+
+**Defined:** 2026-06-22
+**Core Value:** Provide a clean, production-ready, containerized Go backend structure that makes starting development of new endpoints and services immediate and seamless.
+
+## v1 Requirements
+
+### Environment & Tooling
+
+- [ ] **ENV-01**: Initialize Go module `github.com/username/backend`.
+- [ ] **ENV-02**: Install core dependency: Gin framework (`github.com/gin-gonic/gin`).
+- [ ] **ENV-03**: Install database driver/ORM: Gorm & PostgreSQL driver (`gorm.io/gorm`, `gorm.io/driver/postgres`).
+- [ ] **ENV-04**: Install Redis client (`github.com/redis/go-redis/v9`).
+- [ ] **ENV-05**: Configure `.air.toml` for hot reloading with Air.
+- [ ] **ENV-06**: Create `docker-compose.yml` defining services for PostgreSQL, Redis, and hot-reloading Air.
+
+### Directory Structure
+
+- [ ] **DIR-01**: Create `cmd/server/` directory containing the main entry point `main.go`.
+- [ ] **DIR-02**: Create `internal/app/` containing application bootstrapper and HTTP router.
+- [ ] **DIR-03**: Create `internal/pkg/` containing shared modules (database connection, logger, config loader, cache connection).
+
+### Database & Migrations
+
+- [ ] **DB-01**: Configure PostgreSQL connection pool in `internal/pkg/db/postgres.go`.
+- [ ] **DB-02**: Integrate `golang-migrate` support for database migrations.
+- [ ] **DB-03**: Create initial SQL migration files under `migrations/`.
+
+### Cache & Storage
+
+- [ ] **CACHE-01**: Configure Redis client connection in `internal/pkg/cache/redis.go`.
+
+### Router & Handlers
+
+- [ ] **API-01**: Create `/ping` route returning `{"message": "pong"}` JSON.
+- [ ] **API-02**: Create `/healthz` route verifying PostgreSQL and Redis connections before returning healthy status.
+
+## v2 Requirements
+
+### Testing
+
+- **TEST-01**: Configure unit test runner with mock databases.
+- **TEST-02**: Add API integration tests.
+
+### Configuration
+
+- **CONF-01**: Add Viper configuration management loader.
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Business Logic Handlers | Out of scope for a basic bootstrap template |
+| Production CI/CD & Deploy configs | Defer to production deployment phase |
+| OAuth/SSO auth routes | Out of scope for initial scaffold |
+
+## Traceability
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| ENV-01 | Phase 1 | Pending |
+| ENV-02 | Phase 1 | Pending |
+| ENV-03 | Phase 1 | Pending |
+| ENV-04 | Phase 1 | Pending |
+| ENV-05 | Phase 1 | Pending |
+| ENV-06 | Phase 1 | Pending |
+| DIR-01 | Phase 2 | Pending |
+| DIR-02 | Phase 2 | Pending |
+| DIR-03 | Phase 2 | Pending |
+| DB-01 | Phase 2 | Pending |
+| DB-02 | Phase 2 | Pending |
+| DB-03 | Phase 2 | Pending |
+| CACHE-01 | Phase 2 | Pending |
+| API-01 | Phase 3 | Pending |
+| API-02 | Phase 3 | Pending |
+
+**Coverage:**
+- v1 requirements: 15 total
+- Mapped to phases: 15
+- Unmapped: 0 ✓
+
+---
+*Requirements defined: 2026-06-22*
+*Last updated: 2026-06-22 after initial definition*
