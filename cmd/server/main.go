@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/username/backend/internal/app"
 	"github.com/username/backend/internal/pkg/cache"
 	"github.com/username/backend/internal/pkg/config"
 	"github.com/username/backend/internal/pkg/db"
@@ -29,8 +30,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = database // Will be used by handlers/repositories in future phases
-
 	// Initialize Redis Cache Client
 	redisClient, err := cache.InitRedis(cfg)
 	if err != nil {
@@ -38,5 +37,13 @@ func main() {
 		os.Exit(1)
 	}
 
-	_ = redisClient // Will be used by handlers/repositories/caches in future phases
+	// Setup Gin HTTP Router
+	r := app.SetupRouter(cfg, database, redisClient)
+
+	// Run HTTP Server
+	slog.Info("HTTP Server is listening", slog.String("port", cfg.Port))
+	if err := r.Run(":" + cfg.Port); err != nil {
+		slog.Error("Server failed to run", slog.String("error", err.Error()))
+		os.Exit(1)
+	}
 }
