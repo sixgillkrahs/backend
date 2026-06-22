@@ -32,8 +32,8 @@
 
 ### Router & Handlers
 
-- [ ] **API-01**: Create `/ping` route returning `{"message": "pong"}` JSON.
-- [ ] **API-02**: Create `/healthz` route verifying PostgreSQL and Redis connections before returning healthy status.
+- [x] **API-01**: Create `/ping` route returning `{"message": "pong"}` JSON.
+- [x] **API-02**: Create `/healthz` route verifying PostgreSQL and Redis connections before returning healthy status.
 
 ## v2 Requirements
 
@@ -71,8 +71,8 @@
 | DB-02 | Phase 2 | Complete |
 | DB-03 | Phase 2 | Complete |
 | CACHE-01 | Phase 2 | Complete |
-| API-01 | Phase 3 | Pending |
-| API-02 | Phase 3 | Pending |
+| API-01 | Phase 3 | Complete |
+| API-02 | Phase 3 | Complete |
 
 **Coverage:**
 
