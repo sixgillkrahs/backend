@@ -12,8 +12,9 @@ Initialize a Golang backend skeleton following the Go Standard Layout with Gin, 
 - [x] **Phase 4: User Authentication & IP-Locked JWTs** - Set up signup, login, password hashing, and token verification middleware with client IP verification. (completed 2026-06-22)
 - [x] **Phase 5: Dynamic RBAC Database Schema & Models** - Create SQL migrations for dynamic roles, resources, actions, policies, and user roles, and define GORM models. (completed 2026-06-22)
 - [x] **Phase 6: Dynamic Authorization Middleware & RBAC Management APIs** - Implement authorization middleware and admin endpoints to manage roles, resources, policies, and role assignment. (completed 2026-06-22)
-- [ ] **Phase 7: Swagger Dependencies & Handler Annotations** - Install swaggo packages and add annotations to all existing API endpoints.
-- [ ] **Phase 8: Swagger Routing & Interactive Verification** - Generate Swagger documentation files, mount Swagger UI route, and perform integration testing.
+- [x] **Phase 7: Swagger Dependencies & Handler Annotations** - Install swaggo packages and add annotations to all existing API endpoints. (completed 2026-06-22)
+- [x] **Phase 8: Swagger Routing & Interactive Verification** - Generate Swagger documentation files, mount Swagger UI route, and perform integration testing. (completed 2026-06-22)
+- [x] **Phase 9: Auth & RBAC Testing (Unit & Integration)** - Write unit and integration testing suites covering tokens, middleware, and handlers. (completed 2026-06-22)
 
 ---
 
@@ -70,7 +71,7 @@ Initialize a Golang backend skeleton following the Go Standard Layout with Gin, 
   - [x] 06-02: RBAC management controllers and router endpoints
   - [x] 06-03: User-role mapping management endpoints
 
-### Phase 7: Swagger Dependencies & Handler Annotations
+### Phase 7: Swagger Dependencies & Handler Annotations (Complete)
 - **Goal**: Install swaggo packages and add annotations to all existing API endpoints.
 - **Depends on**: Phase 6
 - **Requirements**: SWAG-01, SWAG-02, SWAG-03, SWAG-04, SWAG-05
@@ -79,11 +80,11 @@ Initialize a Golang backend skeleton following the Go Standard Layout with Gin, 
   2. Swagger general config annotations added to `cmd/server/main.go`.
   3. API annotation comments added to all controller handlers (Health, Ping, Signup, Login, Profile, Roles, Resources, Actions, Policies, User-Roles).
 - **Plans**:
-  - [ ] 07-01: Install swaggo dependencies and configure CLI tool
-  - [ ] 07-02: Add Swagger annotations to general and authentication endpoints
-  - [ ] 07-03: Add Swagger annotations to RBAC management endpoints
+  - [x] 07-01: Install swaggo dependencies and configure CLI tool
+  - [x] 07-02: Add Swagger annotations to general and authentication endpoints
+  - [x] 07-03: Add Swagger annotations to RBAC management endpoints
 
-### Phase 8: Swagger Routing & Interactive Verification
+### Phase 8: Swagger Routing & Interactive Verification (Complete)
 - **Goal**: Generate Swagger documentation files, mount Swagger UI route, and perform integration testing.
 - **Depends on**: Phase 7
 - **Requirements**: SWAG-06, SWAG-07
@@ -92,15 +93,28 @@ Initialize a Golang backend skeleton following the Go Standard Layout with Gin, 
   2. Swagger routing endpoint `/swagger/*any` mounted and accessible.
   3. Interactive UI successfully loaded, permitting request execution and Bearer authentication token setup.
 - **Plans**:
-  - [ ] 08-01: Mount Swagger UI route and integrate generated docs
-  - [ ] 08-02: Perform interactive endpoint validation tests via Swagger UI
+  - [x] 08-01: Mount Swagger UI route and integrate generated docs
+  - [x] 08-02: Perform interactive endpoint validation tests via Swagger UI
+
+### Phase 9: Auth & RBAC Testing (Unit & Integration) (Complete)
+- **Goal**: Implement unit and integration testing suites using mock connections.
+- **Depends on**: Phase 8
+- **Requirements**: TEST-01, TEST-02, TEST-03
+- **Success Criteria**:
+  1. Unit tests written for Auth tokens, middleware, and handlers.
+  2. Integration tests written for RBAC middleware and handlers using sqlmock/miniredis.
+  3. Full test suite executes successfully with >80% coverage on core packages.
+- **Plans**:
+  - [x] 09-01: Setup testify, go-sqlmock, and miniredis testing environments
+  - [x] 09-02: Implement token helper and middleware unit tests
+  - [x] 09-03: Implement health, authentication, and RBAC handler integration tests
 
 ---
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -110,5 +124,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 4. User Authentication & IP-Locked JWTs | 3/3 | Complete | 2026-06-22 |
 | 5. Dynamic RBAC Database Schema & Models | 2/2 | Complete | 2026-06-22 |
 | 6. Dynamic Authorization Middleware & RBAC Management APIs | 3/3 | Complete | 2026-06-22 |
-| 7. Swagger Dependencies & Handler Annotations | 0/3 | Planned | — |
-| 8. Swagger Routing & Interactive Verification | 0/2 | Planned | — |
+| 7. Swagger Dependencies & Handler Annotations | 3/3 | Complete | 2026-06-22 |
+| 8. Swagger Routing & Interactive Verification | 2/2 | Complete | 2026-06-22 |
+| 9. Auth & RBAC Testing (Unit & Integration) | 3/3 | Complete | 2026-06-22 |
