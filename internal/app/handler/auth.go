@@ -56,6 +56,7 @@ func SignupHandler(db *gorm.DB) gin.HandlerFunc {
 			Name:         req.Name,
 			Email:        req.Email,
 			PasswordHash: string(passwordHash),
+			Status:       "active",
 		}
 
 		if err := db.Create(&user).Error; err != nil {

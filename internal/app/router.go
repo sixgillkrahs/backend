@@ -108,6 +108,9 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 			// User Role Mapping
 			protected.POST("/users/:id/roles", middleware.RBACMiddleware(dbConn, "users", "update"), handler.AssignUserRole(dbConn))
 			protected.DELETE("/users/:id/roles", middleware.RBACMiddleware(dbConn, "users", "update"), handler.RemoveUserRole(dbConn))
+
+			// Users Directory
+			protected.GET("/users", middleware.RBACMiddleware(dbConn, "users", "read"), handler.GetUsers(dbConn))
 		}
 	}
 

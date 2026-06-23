@@ -2,8 +2,10 @@ package handler
 
 import (
 	"log/slog"
+	"math"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/username/backend/internal/app/model"
@@ -616,3 +618,134 @@ func RemoveUserRole(db *gorm.DB) gin.HandlerFunc {
 		c.JSON(http.StatusOK, gin.H{"message": "Role revoked successfully"})
 	}
 }
+
+// GetUsers returns a paginated, sorted, and filtered list of users with their primary role.
+// @Summary List Users
+// @Description Returns a list of users supporting search, role/status filtering, pagination, and sorting.
+// @Tags Users
+// @Produce json
+// @Security BearerAuth
+// @Param page query int false "Page number" default(1)
+// @Param limit query int false "Items per page" default(10)
+// @Param sort_by query string false "Sort by field (name, email, status, role, joinedDate)" default(name)
+// @Param sort_order query string false "Sort order (asc, desc)" default(asc)
+// @Param search query string false "Search query filtering name or email"
+// @Param role query string false "Filter by role name"
+// @Param status query string false "Filter by status"
+// @Success 200 {object} map[string]interface{} "Paginated list of users"
+// @Failure 401 {object} map[string]string "Unauthorized"
+// @Failure 403 {object} map[string]string "Forbidden by RBAC policy"
+// @Failure 500 {object} map[string]string "Database error"
+// @Router /api/v1/users [get]
+func GetUsers(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
+		limit, _ := strconv.Atoi(c.DefaultQuery("limit", "10"))
+		sortBy := c.DefaultQuery("sort_by", "name")
+		sortOrder := c.DefaultQuery("sort_order", "asc")
+		search := c.Query("search")
+		roleFilter := c.Query("role")
+		statusFilter := c.Query("status")
+
+		if page < 1 {
+			page = 1
+		}
+		if limit < 1 {
+			limit = 10
+		}
+		if limit > 100 {
+			limit = 100
+		}
+
+		offset := (page - 1) * limit
+
+		query := db.Table("users").
+			Select("users.id, users.name, users.email, users.status, COALESCE(roles.name, 'User') as role, users.created_at").
+			Joins("LEFT JOIN user_roles ON user_roles.user_id = users.id").
+			Joins("LEFT JOIN roles ON roles.id = user_roles.role_id")
+
+		if search != "" {
+			query = query.Where("users.name ILIKE ? OR users.email ILIKE ?", "%"+search+"%", "%"+search+"%")
+		}
+		if roleFilter != "" {
+			if roleFilter == "User" {
+				query = query.Where("roles.name = ? OR roles.name IS NULL", roleFilter)
+			} else {
+				query = query.Where("roles.name = ?", roleFilter)
+			}
+		}
+		if statusFilter != "" {
+			query = query.Where("users.status = ?", statusFilter)
+		}
+
+		var total int64
+		if err := query.Count(&total).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		orderClause := "users.name"
+		if sortBy == "email" {
+			orderClause = "users.email"
+		} else if sortBy == "status" {
+			orderClause = "users.status"
+		} else if sortBy == "role" {
+			orderClause = "roles.name"
+		} else if sortBy == "joinedDate" {
+			orderClause = "users.created_at"
+		}
+
+		if sortOrder == "desc" {
+			orderClause += " DESC"
+		} else {
+			orderClause += " ASC"
+		}
+
+		type UserRow struct {
+			ID        uint      `json:"id"`
+			Name      string    `json:"name"`
+			Email     string    `json:"email"`
+			Role      string    `json:"role"`
+			Status    string    `json:"status"`
+			CreatedAt time.Time `json:"created_at"`
+		}
+
+		var rows []UserRow
+		if err := query.Order(orderClause).Offset(offset).Limit(limit).Scan(&rows).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		type UserResponse struct {
+			ID         string `json:"id"`
+			Name       string `json:"name"`
+			Email      string `json:"email"`
+			Role       string `json:"role"`
+			Status     string `json:"status"`
+			JoinedDate string `json:"joinedDate"`
+		}
+
+		usersList := make([]UserResponse, len(rows))
+		for i, r := range rows {
+			usersList[i] = UserResponse{
+				ID:         strconv.FormatUint(uint64(r.ID), 10),
+				Name:       r.Name,
+				Email:      r.Email,
+				Role:       r.Role,
+				Status:     r.Status,
+				JoinedDate: r.CreatedAt.Format("2006-01-02"),
+			}
+		}
+
+		pages := int(math.Ceil(float64(total) / float64(limit)))
+
+		c.JSON(http.StatusOK, gin.H{
+			"users": usersList,
+			"total": total,
+			"page":  page,
+			"limit": limit,
+			"pages": pages,
+		})
+	}
+}
+
