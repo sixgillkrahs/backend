@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"log/slog"
 	"math"
 	"net/http"
@@ -8,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/username/backend/internal/app/model"
+	"github.com/sixgillkrahs/backend/internal/app/model"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -129,7 +130,24 @@ func DeleteRole(db *gorm.DB) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid role ID"})
 			return
 		}
-		if err := db.Delete(&model.Role{}, id).Error; err != nil {
+
+		var role model.Role
+		if err := db.First(&role, id).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Role not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			}
+			return
+		}
+
+		// Prevent deleting system default roles
+		if role.Name == "admin" || role.Name == "user" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Cannot delete system default role: " + role.Name})
+			return
+		}
+
+		if err := db.Delete(&role).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
@@ -748,4 +766,3 @@ func GetUsers(db *gorm.DB) gin.HandlerFunc {
 		})
 	}
 }
-
