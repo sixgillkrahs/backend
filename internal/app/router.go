@@ -7,12 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
+	_ "github.com/sixgillkrahs/backend/docs"
+	"github.com/sixgillkrahs/backend/internal/app/handler"
+	"github.com/sixgillkrahs/backend/internal/app/middleware"
+	"github.com/sixgillkrahs/backend/internal/pkg/config"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/username/backend/docs"
-	"github.com/username/backend/internal/app/handler"
-	"github.com/username/backend/internal/app/middleware"
-	"github.com/username/backend/internal/pkg/config"
 	"gorm.io/gorm"
 )
 
@@ -32,6 +32,9 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 
 	// Register custom slog logger middleware
 	r.Use(slogLogger())
+
+	// Register response wrapping middleware to format responses as {code, message, data}
+	r.Use(middleware.ResponseWrapperMiddleware())
 
 	// Configure CORS middleware
 	r.Use(func(c *gin.Context) {
@@ -62,7 +65,6 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 		}
 		ginSwagger.WrapHandler(swaggerFiles.Handler)(c)
 	})
-
 
 	// API v1 Router Group
 	api := r.Group("/api/v1")
