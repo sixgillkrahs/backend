@@ -111,6 +111,9 @@ func SetupRouter(cfg *config.Config, dbConn *gorm.DB, rdbClient *redis.Client) *
 
 			// Users Directory
 			protected.GET("/users", middleware.RBACMiddleware(dbConn, "users", "read"), handler.GetUsers(dbConn))
+
+			// Real-Time Audit Stream (SSE)
+			protected.GET("/audit/stream", handler.AuditStreamHandler())
 		}
 	}
 
