@@ -10,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sixgillkrahs/backend/internal/app/model"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -764,5 +765,225 @@ func GetUsers(db *gorm.DB) gin.HandlerFunc {
 			"limit":        limit,
 			"totalPages":   pages,
 		})
+	}
+}
+
+type CreateUserRequest struct {
+	Name     string `json:"name" binding:"required,min=2,max=100"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6,max=72"`
+	Role     string `json:"role" binding:"required"`
+	Status   string `json:"status" binding:"required,oneof=active inactive"`
+}
+
+type UpdateUserRequest struct {
+	Name     *string `json:"name" binding:"omitempty,min=2,max=100"`
+	Email    *string `json:"email" binding:"omitempty,email"`
+	Password *string `json:"password" binding:"omitempty,min=6,max=72"`
+	Role     *string `json:"role" binding:"omitempty"`
+	Status   *string `json:"status" binding:"omitempty,oneof=active inactive"`
+}
+
+// CreateUser creates a new user and assigns their role mapping.
+func CreateUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var req CreateUserRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Check email conflict
+		var existing model.User
+		if err := db.Where("email = ?", req.Email).First(&existing).Error; err == nil {
+			c.JSON(http.StatusConflict, gin.H{"error": "Email is already registered"})
+			return
+		}
+
+		// Hash password
+		passwordHash, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Password hashing failure"})
+			return
+		}
+
+		// Start a transaction to ensure atomic user + role mapping creation
+		tx := db.Begin()
+		user := model.User{
+			Name:         req.Name,
+			Email:        req.Email,
+			PasswordHash: string(passwordHash),
+			Status:       req.Status,
+		}
+		if err := tx.Create(&user).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Map role
+		var role model.Role
+		if err := tx.Where("name = ?", req.Role).First(&role).Error; err != nil {
+			// Fallback: If not found, see if we can find by ID or lowercase
+			if err := tx.Where("LOWER(name) = LOWER(?)", req.Role).First(&role).Error; err != nil {
+				tx.Rollback()
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Assigned role not found"})
+				return
+			}
+		}
+
+		userRole := model.UserRole{
+			UserID: user.ID,
+			RoleID: role.ID,
+		}
+		if err := tx.Create(&userRole).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		tx.Commit()
+		c.JSON(http.StatusCreated, gin.H{
+			"message": "User created successfully",
+			"user": gin.H{
+				"id":    strconv.FormatUint(uint64(user.ID), 10),
+				"name":  user.Name,
+				"email": user.Email,
+				"role":  role.Name,
+				"status": user.Status,
+			},
+		})
+	}
+}
+
+// UpdateUser updates a user and their role mapping.
+func UpdateUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.ParseUint(idStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		var req UpdateUserRequest
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var user model.User
+		if err := db.First(&user, id).Error; err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
+		tx := db.Begin()
+
+		if req.Name != nil {
+			user.Name = *req.Name
+		}
+		if req.Email != nil && *req.Email != user.Email {
+			// Check conflict
+			var existing model.User
+			if err := tx.Where("email = ? AND id != ?", *req.Email, user.ID).First(&existing).Error; err == nil {
+				tx.Rollback()
+				c.JSON(http.StatusConflict, gin.H{"error": "Email is already in use"})
+				return
+			}
+			user.Email = *req.Email
+		}
+		if req.Password != nil && *req.Password != "" {
+			passwordHash, err := bcrypt.GenerateFromPassword([]byte(*req.Password), bcrypt.DefaultCost)
+			if err != nil {
+				tx.Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Password hashing failure"})
+				return
+			}
+			user.PasswordHash = string(passwordHash)
+		}
+		if req.Status != nil {
+			user.Status = *req.Status
+		}
+
+		if err := tx.Save(&user).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Update role mapping if role provided
+		if req.Role != nil {
+			var role model.Role
+			if err := tx.Where("name = ?", *req.Role).First(&role).Error; err != nil {
+				if err := tx.Where("LOWER(name) = LOWER(?)", *req.Role).First(&role).Error; err != nil {
+					tx.Rollback()
+					c.JSON(http.StatusBadRequest, gin.H{"error": "Role not found"})
+					return
+				}
+			}
+
+			// Delete old mapping
+			if err := tx.Where("user_id = ?", user.ID).Delete(&model.UserRole{}).Error; err != nil {
+				tx.Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update role mapping"})
+				return
+			}
+
+			// Add new mapping
+			userRole := model.UserRole{
+				UserID: user.ID,
+				RoleID: role.ID,
+			}
+			if err := tx.Create(&userRole).Error; err != nil {
+				tx.Rollback()
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create new role mapping"})
+				return
+			}
+		}
+
+		tx.Commit()
+		c.JSON(http.StatusOK, gin.H{"message": "User updated successfully"})
+	}
+}
+
+// DeleteUser deletes a user and prevents self-deletion.
+func DeleteUser(db *gorm.DB) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		idStr := c.Param("id")
+		id, err := strconv.ParseUint(idStr, 10, 64)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+			return
+		}
+
+		// Self-deletion check
+		sessionUserIDVal, exists := c.Get("userID")
+		if exists {
+			sessionUserID, ok := sessionUserIDVal.(uint)
+			if ok && uint(id) == sessionUserID {
+				c.JSON(http.StatusBadRequest, gin.H{"error": "Cannot delete your own user session account"})
+				return
+			}
+		}
+
+		tx := db.Begin()
+
+		// Delete role mapping
+		if err := tx.Where("user_id = ?", id).Delete(&model.UserRole{}).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		// Delete user
+		if err := tx.Delete(&model.User{}, id).Error; err != nil {
+			tx.Rollback()
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		tx.Commit()
+		c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 	}
 }
