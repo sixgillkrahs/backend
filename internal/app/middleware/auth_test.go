@@ -6,9 +6,9 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sixgillkrahs/backend/internal/pkg/auth"
+	"github.com/sixgillkrahs/backend/internal/pkg/config"
 	"github.com/stretchr/testify/assert"
-	"github.com/username/backend/internal/pkg/auth"
-	"github.com/username/backend/internal/pkg/config"
 )
 
 func TestAuthMiddleware(t *testing.T) {
@@ -100,6 +100,23 @@ func TestAuthMiddleware(t *testing.T) {
 
 		assert.Equal(t, http.StatusOK, w.Code)
 		assert.Contains(t, w.Body.String(), `"userID":42`)
+		assert.Contains(t, w.Body.String(), `"clientIP":"192.0.2.1"`)
+	})
+
+	// 6. Success with Query Parameter Token
+	t.Run("Success with Query Parameter Token", func(t *testing.T) {
+		clientIP := "192.0.2.1"
+		token, err := auth.GenerateToken(100, clientIP, cfg.JWTSecret, cfg.JWTExpirationHours)
+		assert.NoError(t, err)
+
+		r := setupRouter()
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest(http.MethodGet, "/test?token="+token, nil)
+		req.RemoteAddr = clientIP + ":1234"
+		r.ServeHTTP(w, req)
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		assert.Contains(t, w.Body.String(), `"userID":100`)
 		assert.Contains(t, w.Body.String(), `"clientIP":"192.0.2.1"`)
 	})
 }
