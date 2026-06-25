@@ -10,8 +10,8 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
+	"github.com/sixgillkrahs/backend/internal/app/model"
 	"github.com/stretchr/testify/assert"
-	"github.com/username/backend/internal/app/model"
 	"gorm.io/gorm"
 )
 

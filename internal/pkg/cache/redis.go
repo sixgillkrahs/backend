@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	"github.com/username/backend/internal/pkg/config"
+	"github.com/sixgillkrahs/backend/internal/pkg/config"
 )
 
 // InitRedis initializes the Redis client and pings it to verify connection.

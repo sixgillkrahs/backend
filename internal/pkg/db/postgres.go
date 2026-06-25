@@ -9,9 +9,9 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/sixgillkrahs/backend/internal/pkg/config"
 	gormpostgres "gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"github.com/username/backend/internal/pkg/config"
 )
 
 // InitPostgres initializes Gorm database connection pool and runs migrations.

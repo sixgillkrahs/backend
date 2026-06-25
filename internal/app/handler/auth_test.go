@@ -11,10 +11,10 @@ import (
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/gin-gonic/gin"
+	"github.com/sixgillkrahs/backend/internal/app/model"
+	"github.com/sixgillkrahs/backend/internal/pkg/config"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/username/backend/internal/app/model"
-	"github.com/username/backend/internal/pkg/config"
 	"gorm.io/gorm"
 )
 
@@ -44,7 +44,7 @@ func TestSignupHandler(t *testing.T) {
 		mock.ExpectCommit()
 
 		r := gin.New()
-		r.POST("/signup", SignupHandler(db))
+		r.POST("/signup", NewAuthHandler(db, config.LoadConfig()).SignupHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, "/signup", bytes.NewBuffer(bodyBytes))
@@ -74,7 +74,7 @@ func TestSignupHandler(t *testing.T) {
 			WillReturnRows(sqlmock.NewRows([]string{"id", "email"}).AddRow(1, reqBody.Email))
 
 		r := gin.New()
-		r.POST("/signup", SignupHandler(db))
+		r.POST("/signup", NewAuthHandler(db, config.LoadConfig()).SignupHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, "/signup", bytes.NewBuffer(bodyBytes))
@@ -91,7 +91,7 @@ func TestSignupHandler(t *testing.T) {
 		assert.NoError(t, err)
 
 		r := gin.New()
-		r.POST("/signup", SignupHandler(db))
+		r.POST("/signup", NewAuthHandler(db, config.LoadConfig()).SignupHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, "/signup", strings.NewReader(`{"name":""}`))
@@ -130,7 +130,7 @@ func TestLoginHandler(t *testing.T) {
 				AddRow(42, reqBody.Email, string(hashedPassword)))
 
 		r := gin.New()
-		r.POST("/login", LoginHandler(db, cfg))
+		r.POST("/login", NewAuthHandler(db, cfg).LoginHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(bodyBytes))
@@ -158,7 +158,7 @@ func TestLoginHandler(t *testing.T) {
 			WillReturnError(gorm.ErrRecordNotFound)
 
 		r := gin.New()
-		r.POST("/login", LoginHandler(db, cfg))
+		r.POST("/login", NewAuthHandler(db, config.LoadConfig()).LoginHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(bodyBytes))
@@ -189,7 +189,7 @@ func TestLoginHandler(t *testing.T) {
 				AddRow(42, reqBody.Email, string(hashedPassword)))
 
 		r := gin.New()
-		r.POST("/login", LoginHandler(db, cfg))
+		r.POST("/login", NewAuthHandler(db, cfg).LoginHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodPost, "/login", bytes.NewBuffer(bodyBytes))
@@ -222,7 +222,7 @@ func TestProfileHandler(t *testing.T) {
 			c.Set("userID", userID)
 			c.Set("clientIP", clientIP)
 			c.Next()
-		}, ProfileHandler(db))
+		}, NewAuthHandler(db, config.LoadConfig()).ProfileHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodGet, "/profile", nil)
@@ -248,7 +248,7 @@ func TestProfileHandler(t *testing.T) {
 		r.GET("/profile", func(c *gin.Context) {
 			c.Set("userID", userID)
 			c.Next()
-		}, ProfileHandler(db))
+		}, NewAuthHandler(db, config.LoadConfig()).ProfileHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodGet, "/profile", nil)
@@ -264,7 +264,7 @@ func TestProfileHandler(t *testing.T) {
 		assert.NoError(t, err)
 
 		r := gin.New()
-		r.GET("/profile", ProfileHandler(db))
+		r.GET("/profile", NewAuthHandler(db, config.LoadConfig()).ProfileHandler)
 
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest(http.MethodGet, "/profile", nil)

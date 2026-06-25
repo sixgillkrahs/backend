@@ -6,15 +6,18 @@
 ## Milestone v1.2: Swagger API Documentation (Active)
 
 ### Dependencies & Setup
+
 - [ ] **SWAG-01**: Install swaggo Gin middleware packages and the `swag` generating command line tool.
 - [ ] **SWAG-02**: Add Swagger general annotations in `cmd/server/main.go` defining the API title, version, base path, and security scheme for JWT Bearer tokens.
 
 ### Endpoint Annotations
+
 - [ ] **SWAG-03**: Annotate general endpoints `/ping` and `/healthz` with appropriate query/response descriptions.
 - [ ] **SWAG-04**: Annotate User authentication endpoints `/api/v1/auth/signup`, `/api/v1/auth/login`, and `/api/v1/profile`. Include security annotations for JWT protection.
 - [ ] **SWAG-05**: Annotate all dynamic RBAC management endpoints (Roles CRUD, Resources CRUD, Actions CRUD, Policies CRUD, and User-Role assignments).
 
 ### Router Integration & Verification
+
 - [ ] **SWAG-06**: Generate doc files via `swag init` and mount `/swagger/*any` route using `gin-swagger` middleware in router.
 - [ ] **SWAG-07**: Verify Swagger UI loads, presents all endpoints, and allows making authenticated testing calls using a JWT token.
 
@@ -23,6 +26,7 @@
 ## Milestone v1.1: Authentication & Dynamic RBAC/Policy (Validated)
 
 ### User Authentication & JWT IP Lock
+
 - [x] **AUTH-01**: User signup endpoint `POST /api/v1/auth/signup` accepts name, email, password, and stores the user with a bcrypt hashed password. (Phase 4)
 - [x] **AUTH-02**: User login endpoint `POST /api/v1/auth/login` validates credentials and returns a JWT access token containing User ID, Role IDs/Names, and Client IP address. (Phase 4)
 - [x] **AUTH-03**: Secure password validation using `bcrypt`. (Phase 4)
@@ -30,10 +34,12 @@
 - [x] **AUTH-05**: Client IP locking enforcement in middleware: requests are rejected (401 Unauthorized) if the caller's IP doesn't match the IP embedded in the token. (Phase 4)
 
 ### Dynamic RBAC Database Schema & Models
+
 - [x] **AUTH-06**: PostgreSQL migration schema for dynamic roles, resources, actions, and policies, including relational GORM models. (Phase 5)
 - [x] **AUTH-07**: Database seeding script/migration containing default roles, actions, resources, and initial admin policies. (Phase 5)
 
 ### Dynamic Authorization & Management APIs
+
 - [x] **AUTH-08**: Dynamic authorization middleware checking target resource/action against policies assigned to the user's roles. (Phase 6)
 - [x] **AUTH-09**: Role management endpoints: CRUD `/api/v1/roles`. (Phase 6)
 - [x] **AUTH-10**: Resource and Action management endpoints: CRUD `/api/v1/resources` and `/api/v1/actions`. (Phase 6)
@@ -45,7 +51,8 @@
 ## Milestone v1.0: Environment & Core Connections (Validated)
 
 ### Environment & Tooling
-- [x] **ENV-01**: Initialize Go module `github.com/username/backend`. (Phase 1)
+
+- [x] **ENV-01**: Initialize Go module `github.com/sixgillkrahs/backend`. (Phase 1)
 - [x] **ENV-02**: Install core dependency: Gin framework (`github.com/gin-gonic/gin`). (Phase 1)
 - [x] **ENV-03**: Install database driver/ORM: Gorm & PostgreSQL driver (`gorm.io/gorm`, `gorm.io/driver/postgres`). (Phase 1)
 - [x] **ENV-04**: Install Redis client (`github.com/redis/go-redis/v9`). (Phase 1)
@@ -53,19 +60,23 @@
 - [x] **ENV-06**: Create `docker-compose.yml` defining services for PostgreSQL, Redis, and hot-reloading Air. (Phase 1)
 
 ### Directory Structure
+
 - [x] **DIR-01**: Create `cmd/server/` directory containing the main entry point `main.go`. (Phase 2)
 - [x] **DIR-02**: Create `internal/app/` containing application bootstrapper and HTTP router. (Phase 2)
 - [x] **DIR-03**: Create `internal/pkg/` containing shared modules (database connection, logger, config loader, cache connection). (Phase 2)
 
 ### Database & Migrations
+
 - [x] **DB-01**: Configure PostgreSQL connection pool in `internal/pkg/db/postgres.go`. (Phase 2)
 - [x] **DB-02**: Integrate `golang-migrate` support for database migrations. (Phase 2)
 - [x] **DB-03**: Create initial SQL migration files under `migrations/`. (Phase 2)
 
 ### Cache & Storage
+
 - [x] **CACHE-01**: Configure Redis client connection in `internal/pkg/cache/redis.go`. (Phase 2)
 
 ### Router & Handlers
+
 - [x] **API-01**: Create `/ping` route returning `{"message": "pong"}` JSON. (Phase 3)
 - [x] **API-02**: Create `/healthz` route verifying PostgreSQL and Redis connections before returning healthy status. (Phase 3)
 
@@ -73,54 +84,55 @@
 
 ## Out of Scope
 
-| Feature | Reason |
-|---------|--------|
-| Business Logic Handlers | Out of scope for a basic bootstrap template |
-| Production CI/CD & Deploy configs | Defer to production deployment phase |
-| OAuth/SSO auth routes | Out of scope for initial scaffold |
+| Feature                           | Reason                                      |
+| --------------------------------- | ------------------------------------------- |
+| Business Logic Handlers           | Out of scope for a basic bootstrap template |
+| Production CI/CD & Deploy configs | Defer to production deployment phase        |
+| OAuth/SSO auth routes             | Out of scope for initial scaffold           |
 
 ---
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| ENV-01 | Phase 1 | Complete |
-| ENV-02 | Phase 1 | Complete |
-| ENV-03 | Phase 1 | Complete |
-| ENV-04 | Phase 1 | Complete |
-| ENV-05 | Phase 1 | Complete |
-| ENV-06 | Phase 1 | Complete |
-| DIR-01 | Phase 2 | Complete |
-| DIR-02 | Phase 2 | Complete |
-| DIR-03 | Phase 2 | Complete |
-| DB-01 | Phase 2 | Complete |
-| DB-02 | Phase 2 | Complete |
-| DB-03 | Phase 2 | Complete |
-| CACHE-01 | Phase 2 | Complete |
-| API-01 | Phase 3 | Complete |
-| API-02 | Phase 3 | Complete |
-| AUTH-01 | Phase 4 | Complete |
-| AUTH-02 | Phase 4 | Complete |
-| AUTH-03 | Phase 4 | Complete |
-| AUTH-04 | Phase 4 | Complete |
-| AUTH-05 | Phase 4 | Complete |
-| AUTH-06 | Phase 5 | Complete |
-| AUTH-07 | Phase 5 | Complete |
-| AUTH-08 | Phase 6 | Complete |
-| AUTH-09 | Phase 6 | Complete |
-| AUTH-10 | Phase 6 | Complete |
-| AUTH-11 | Phase 6 | Complete |
-| AUTH-12 | Phase 6 | Complete |
-| SWAG-01 | Phase 7 | Planned |
-| SWAG-02 | Phase 7 | Planned |
-| SWAG-03 | Phase 7 | Planned |
-| SWAG-04 | Phase 7 | Planned |
-| SWAG-05 | Phase 7 | Planned |
-| SWAG-06 | Phase 8 | Planned |
-| SWAG-07 | Phase 8 | Planned |
+| Requirement | Phase   | Status   |
+| ----------- | ------- | -------- |
+| ENV-01      | Phase 1 | Complete |
+| ENV-02      | Phase 1 | Complete |
+| ENV-03      | Phase 1 | Complete |
+| ENV-04      | Phase 1 | Complete |
+| ENV-05      | Phase 1 | Complete |
+| ENV-06      | Phase 1 | Complete |
+| DIR-01      | Phase 2 | Complete |
+| DIR-02      | Phase 2 | Complete |
+| DIR-03      | Phase 2 | Complete |
+| DB-01       | Phase 2 | Complete |
+| DB-02       | Phase 2 | Complete |
+| DB-03       | Phase 2 | Complete |
+| CACHE-01    | Phase 2 | Complete |
+| API-01      | Phase 3 | Complete |
+| API-02      | Phase 3 | Complete |
+| AUTH-01     | Phase 4 | Complete |
+| AUTH-02     | Phase 4 | Complete |
+| AUTH-03     | Phase 4 | Complete |
+| AUTH-04     | Phase 4 | Complete |
+| AUTH-05     | Phase 4 | Complete |
+| AUTH-06     | Phase 5 | Complete |
+| AUTH-07     | Phase 5 | Complete |
+| AUTH-08     | Phase 6 | Complete |
+| AUTH-09     | Phase 6 | Complete |
+| AUTH-10     | Phase 6 | Complete |
+| AUTH-11     | Phase 6 | Complete |
+| AUTH-12     | Phase 6 | Complete |
+| SWAG-01     | Phase 7 | Planned  |
+| SWAG-02     | Phase 7 | Planned  |
+| SWAG-03     | Phase 7 | Planned  |
+| SWAG-04     | Phase 7 | Planned  |
+| SWAG-05     | Phase 7 | Planned  |
+| SWAG-06     | Phase 8 | Planned  |
+| SWAG-07     | Phase 8 | Planned  |
 
 **Coverage:**
+
 - Milestone v1.2 requirements: 7 total
 - Mapped to phases: 7
 - Unmapped: 0 ✓

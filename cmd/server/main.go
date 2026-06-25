@@ -4,10 +4,10 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/username/backend/internal/app"
-	"github.com/username/backend/internal/pkg/cache"
-	"github.com/username/backend/internal/pkg/config"
-	"github.com/username/backend/internal/pkg/db"
+	"github.com/sixgillkrahs/backend/internal/app"
+	"github.com/sixgillkrahs/backend/internal/pkg/cache"
+	"github.com/sixgillkrahs/backend/internal/pkg/config"
+	"github.com/sixgillkrahs/backend/internal/pkg/db"
 )
 
 // @title Golang Gin Backend Scaffold API

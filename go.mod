@@ -1,4 +1,4 @@
-module github.com/username/backend
+module github.com/sixgillkrahs/backend
 
 go 1.26.3
 
